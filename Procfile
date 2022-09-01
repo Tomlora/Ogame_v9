@@ -1,0 +1,1 @@
+web: sh setup.sh && streamlit run cost_v9.py

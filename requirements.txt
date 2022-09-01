@@ -1,0 +1,6 @@
+streamlit
+pandas
+numpy
+asyncio
+openpyxl
+plotly_express
