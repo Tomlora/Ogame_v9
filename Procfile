@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run cost_v9.py
+web: sh setup.sh && streamlit run cout_v9.py

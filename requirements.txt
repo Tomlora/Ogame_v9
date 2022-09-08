@@ -4,3 +4,6 @@ numpy
 asyncio
 openpyxl
 plotly_express
+streamlit_option_menu
+pyxlsb
+xlsxwriter
