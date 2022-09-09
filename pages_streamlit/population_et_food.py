@@ -20,16 +20,16 @@ def pop(data):
         total_pop = pop_max + bonus_bat + classe_marchand
         return total_pop
 
-    def conso_nourriture(base_value:int, factor:float, level:int, reduc_conso:float, vitesse_uni:int):
-        conso = (base_value * pow(factor, level) * (level + 1))*vitesse_uni
+    def conso_nourriture(base_value:int, factor:float, level:int, reduc_conso:float):
+        conso = (base_value * pow(factor, level) * (level + 1))* st.session_state["vitesse_eco"]
         
         conso = conso * (1-reduc_conso)
         
         return conso
 
-    def prod_nourriture(base_value:int, factor:float, level:int, bonus_production:float, vitesse_uni:int):
+    def prod_nourriture(base_value:int, factor:float, level:int, bonus_production:float):
         
-        prod = (base_value * pow(factor, level) * (level + 1))*vitesse_uni
+        prod = (base_value * pow(factor, level) * (level + 1)) * st.session_state["vitesse_eco"]
         bonus_prod = prod * bonus_production
         
         prod = prod + bonus_prod
@@ -53,7 +53,6 @@ def pop(data):
     level_residence = st.slider('Niveau résidence', 0,90,0)
     level_ferme = st.slider('Niveau production food', 0, 90, 0)
 
-    vitesse_uni = st.slider('Vitesse economique', 1, 8, 1 )
     marchand = st.checkbox('Classe alliance marchand ?')
 
     if st.session_state['race2'] == 'Humain':
@@ -172,11 +171,11 @@ def pop(data):
         st.metric(label='Pop max', value='{:,}'.format(int(pop_max)).replace(',','.'))
         
     with kpi2:
-        conso = conso_nourriture(base_value_conso, factor_conso, level_residence, reduc_conso_value, vitesse_uni)
+        conso = conso_nourriture(base_value_conso, factor_conso, level_residence, reduc_conso_value)
         st.metric(label='Conso nourriture', value='{:,}'.format(int(conso)).replace(',','.'))
         
     with kpi3:
-        prod = prod_nourriture(base_value_prod, factor_prod, level_ferme, bonus_prod_value, vitesse_uni)
+        prod = prod_nourriture(base_value_prod, factor_prod, level_ferme, bonus_prod_value)
         st.metric(label='Production alimentaire', value='{:,}'.format(int(prod)).replace(',','.'))
         
     kpi4, kpi5 = st.columns(2)
@@ -198,19 +197,19 @@ def pop(data):
         
     if ratio_nourriture < 1:
         with st.expander('Informations supplémentaires'):
-            prod_next = prod_nourriture(base_value_prod, factor_prod, level_ferme + 1, bonus_prod_value, vitesse_uni)
+            prod_next = prod_nourriture(base_value_prod, factor_prod, level_ferme + 1, bonus_prod_value)
             ratio_nourriture_next = ratio_nourri(prod_next, conso)
             st.write(f'Avec un niveau de ferme en plus, tu produiras assez pour {round(ratio_nourriture_next*100,2)}% de la population')
             
             if reduc_conso != 0:
                 reduc_conso_value_next = (reduc_conso + 1 ) / 100
-                conso_next = conso_nourriture(base_value_conso, factor_conso, level_residence, reduc_conso_value_next, vitesse_uni)
+                conso_next = conso_nourriture(base_value_conso, factor_conso, level_residence, reduc_conso_value_next)
                 ratio_nourriture_next2 = ratio_nourri(prod, conso_next)
                 st.write(f'Avec un niveau de {reduc_conso_name} supplémentaire, tu produiras assez pour {round(ratio_nourriture_next2*100,2)}% de la population')
             
             if bonus_prod !=0:
                 bonus_prod_value_next = (bonus_prod + 1) * factor_bonus / 100
-                bonus_next2 = prod_nourriture(base_value_prod, factor_prod, level_ferme, bonus_prod_value_next, vitesse_uni)
+                bonus_next2 = prod_nourriture(base_value_prod, factor_prod, level_ferme, bonus_prod_value_next)
                 ratio_nourriture_next3 = ratio_nourri(bonus_next2, conso)
                 st.write(f'Avec un niveau de {bonus_prod_name} supplémentaire, tu produiras assez pour {round(ratio_nourriture_next3*100,2)}% de la population ')
             

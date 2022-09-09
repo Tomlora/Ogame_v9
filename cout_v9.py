@@ -3,11 +3,15 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import urllib
+
+import xml.etree.ElementTree as et 
 
 from streamlit_option_menu import option_menu
 from pages_streamlit.population_et_food import pop
 from pages_streamlit.reduction_cost import reduc_cost
 from pages_streamlit.slot_recherche import slot
+from pages_streamlit.calcul_expedition import calcul_expe
 
 st.set_page_config(
     page_title="Ogame v9",
@@ -43,19 +47,67 @@ def load_data():
     cost_v9 = pd.read_excel('cost_v9.xlsx', sheet_name=1)
     return data, data_pop, cost_v9
 
+@st.cache
+def chargement_uni():
+    db_liste_uni = 'https://s190-fr.ogame.gameforge.com/api/universes.xml'
+    urllib.request.urlretrieve(db_liste_uni, f"./xml/liste_univers.xml")
+
+    df_liste_uni = pd.read_xml('./xml/liste_univers.xml')
+
+
+    for num_uni in df_liste_uni['id'].values:
+
+        db_uni = f'https://s{num_uni}-fr.ogame.gameforge.com/api/serverData.xml'
+        urllib.request.urlretrieve(db_uni, f"./xml/uni/{num_uni}.xml")
+        
+    name_uni = []
+    speed_uni = []
+    speed_flotte_peace = []
+    speed_flotte_war = []
+    speed_flotte_holding = []
+    cdr_flotte = []
+    cdr_def = []
+    top1 = []
+
+    for num_uni in df_liste_uni['id'].values:
+        my_tree = et.parse(f'./xml/uni/{num_uni}.xml')
+        my_root = my_tree.getroot()
+        name_uni.append(my_root[0].text)
+        speed_uni.append(my_root[7].text)
+        speed_flotte_peace.append(my_root[8].text)
+        speed_flotte_war.append(my_root[9].text)
+        speed_flotte_holding.append(my_root[10].text)
+        cdr_flotte.append(my_root[16].text)
+        cdr_def.append(my_root[17].text)
+        top1.append(my_root[21].text)
+        
+        
+    df_univers = pd.DataFrame([name_uni, speed_uni, speed_flotte_peace, speed_flotte_war, speed_flotte_holding, cdr_flotte, cdr_def, top1],
+                            index=['Name', 'Vitesse eco', 'Vitesse allie', 'Vitesse attaque', 'Vitesse statio', 'CDR Flotte', 'CDR Def', 'Top1']).transpose()
+    
+    df_univers['Top1'] = df_univers['Top1'].astype('float') 
+    
+    return df_univers 
+        
+
 data, data_pop, cost_v9 = load_data()
+df_univers = chargement_uni()
 
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche'],
-                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition'],
+                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 
         "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#FFFFFF"},
         "nav-link-selected": {"background-color": "#2C3845"},
     })
-    st.write('----------------')
-    st.write('by Tomlora (v1.1)')
+    
+    st.session_state.univers = st.selectbox('Univers', df_univers['Name'])
+    st.session_state.vitesse_eco = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse eco'].values[0])
+    st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
+    st.write(f'Vitesse éco : {st.session_state["vitesse_eco"]} \n \n')
+    st.title('by Tomlora (v1.2)')
     
 
 
@@ -155,3 +207,6 @@ elif selected == 'Reduction cout':
     
 elif selected == 'Slot recherche':
     slot(data, cost_v9)
+    
+elif selected == 'Expedition':
+    calcul_expe()
