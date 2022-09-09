@@ -26,7 +26,7 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 - Calcul du cout d'un batiment ou d'une recherche de la nouvelle version, en prenant en compte les réductions de constructions possibles que peuvent obtenir les joueurs.
 
  <p align="center">
-  <img width="1000" height="500" src="https://i.imgur.com/D4YbMMG.png">
+  <img width="1000" height="500" src="https://i.imgur.com/5G3nfPP.png">
 </p>
  <p align="center">
   <img width="1000" height="500" src="https://i.imgur.com/sBkmpVQ.png">
@@ -35,7 +35,7 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 - Statistiques sur la population obtenable depuis cette mise à jour
 
  <p align="center">
-  <img width="1000" height="500" src="https://i.imgur.com/Qk5H4lW.png">
+  <img width="1000" height="400" src="https://i.imgur.com/a6lfb2v.png">
 </p>
  <p align="center">
   <img width="1000" height="500" src="https://i.imgur.com/8031Qlz.png">
@@ -44,13 +44,13 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 - Calcul des réductions de coûts obtenables
 
  <p align="center">
-  <img width="1000" height="500" src="https://i.imgur.com/zLjdVRH.png">
+  <img width="1000" height="500" src="https://i.imgur.com/uohyatL.png">
 </p>
 
 - Choix des technologies disponibles
 
  <p align="center">
-  <img width="900" height="300" src="https://i.imgur.com/A668m6C.png">
+  <img width="900" height="300" src="https://i.imgur.com/p3DXh8Q.png">
 </p>
 
 - Calculateurs d'expeditions
