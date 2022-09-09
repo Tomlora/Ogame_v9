@@ -56,11 +56,11 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 - Calculateurs d'expeditions
 
  <p align="center">
-  <img width="900" height="300" src="https://i.imgur.com/2UX6e9v.png">
+  <img width="1000" height="500" src="https://i.imgur.com/2UX6e9v.png">
 </p>
 
  <p align="center">
-  <img width="900" height="300" src="https://i.imgur.com/GVaxlN9.png">
+  <img width="1000" height="500" src="https://i.imgur.com/GVaxlN9.png">
 </p>
 
 
