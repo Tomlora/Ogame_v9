@@ -50,7 +50,7 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 - Choix des technologies disponibles
 
  <p align="center">
-  <img width="900" height="300" src="https://i.imgur.com/p3DXh8Q.png">
+  <img width="900" height="500" src="https://i.imgur.com/p3DXh8Q.png">
 </p>
 
 - Calculateurs d'expeditions
