@@ -218,11 +218,20 @@ def pop(data):
         batiment_n2 = st.slider('Batiment N2', 0, 60, 0)
         batiment_n3 = st.slider('Batiment N3', 0, 60, 0)
         
-        prop_n2 = int(pop_max_nourri_possible) * (batiment_n2 / 100)
-        prop_n3 = int(prop_n2) * (batiment_n3 / 100)
+        def graph_popN2N3(pop):
         
-        fig = px.pie(names=['N1', 'N2', 'N3'], values=[int(pop_max_nourri_possible), int(prop_n2), int(prop_n3)])
-        fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20)
+            prop_n2 = int(pop) * (batiment_n2 / 100)
+            prop_n3 = int(prop_n2) * (batiment_n3 / 100)
+            
+            fig = px.pie(names=['N1', 'N2', 'N3'], values=[int(pop), int(prop_n2), int(prop_n3)])
+            fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20)
+            
+            return fig
         
+        if ratio_nourriture <= 1: # Lorsque la conso dépasse 100% , on s'arrête à la limite de la population totale. Sinon, on prend le max nourri.
+            fig = graph_popN2N3(pop_max_nourri_possible)
+        else:
+            fig = graph_popN2N3(pop_max)
+            
         st.write(fig)
     
