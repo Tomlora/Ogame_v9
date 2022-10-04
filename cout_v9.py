@@ -12,6 +12,7 @@ from pages_streamlit.population_et_food import pop
 from pages_streamlit.reduction_cost import reduc_cost
 from pages_streamlit.slot_recherche import slot
 from pages_streamlit.calcul_expedition import calcul_expe
+from pages_streamlit.temps_exploration import exploration
 
 st.set_page_config(
     page_title="Ogame v9",
@@ -94,8 +95,8 @@ data, data_pop, cost_v9 = load_data()
 df_univers = chargement_uni()
 
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition'],
-                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition', 'Exploration'],
+                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear', 'send-fill'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 
@@ -105,9 +106,10 @@ with st.sidebar:
     
     st.session_state.univers = st.selectbox('Univers', df_univers['Name'])
     st.session_state.vitesse_eco = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse eco'].values[0])
+    st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
     st.write(f'Vitesse éco : {st.session_state["vitesse_eco"]} \n \n')
-    st.title('by Tomlora (v1.2)')
+    st.title('by Tomlora (v1.3)')
     
 
 
@@ -210,3 +212,6 @@ elif selected == 'Slot recherche':
     
 elif selected == 'Expedition':
     calcul_expe()
+    
+elif selected == 'Exploration':
+    exploration()
