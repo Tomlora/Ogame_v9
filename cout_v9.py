@@ -95,8 +95,8 @@ data, data_pop, cost_v9 = load_data()
 df_univers = chargement_uni()
 
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition', 'Exploration'],
-                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear', 'send-fill'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition'],
+                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 

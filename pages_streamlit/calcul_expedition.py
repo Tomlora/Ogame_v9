@@ -221,7 +221,7 @@ def calcul_expe():
         with vsx1:
             st._legacy_dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], 2400, 560)
         with vsx2:
-            st.write(fig)
+            st.plotly_chart(fig)
         
         
         

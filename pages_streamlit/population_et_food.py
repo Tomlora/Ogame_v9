@@ -233,5 +233,5 @@ def pop(data):
         else:
             fig = graph_popN2N3(pop_max)
             
-        st.write(fig)
+        st.plotly_chart(fig)
     
