@@ -43,6 +43,17 @@ st.markdown("<h1 style='text-align: center; color: white;'>Ogame v9 </h1>", unsa
 
 @st.cache
 def load_data():
+    """_summary_
+
+    Returns
+    -------
+    data
+        Data des couts en ressources
+    data_pop
+        Data des populations en fonction du niveau du batiments
+    cost_v9
+        Cout des batiments v9 (fichier original)
+    """
     data = pd.read_excel('data_cost.xlsx', sheet_name=0)
     data_pop = pd.read_excel('data_cost.xlsx', sheet_name=1)
     cost_v9 = pd.read_excel('cost_v9.xlsx', sheet_name=1)
@@ -50,15 +61,19 @@ def load_data():
 
 @st.cache
 def chargement_uni():
+    # on va chercher la liste des univers
     db_liste_uni = 'https://s190-fr.ogame.gameforge.com/api/universes.xml'
+    # on enregistre le fichier
     urllib.request.urlretrieve(db_liste_uni, f"./xml/liste_univers.xml")
 
+    # on le réouvre
     df_liste_uni = pd.read_xml('./xml/liste_univers.xml')
 
-
+    # on prend l'id de chaque uni. L'api fonctionne en y ajoutant l'id de l'uni en début d'url
     for num_uni in df_liste_uni['id'].values:
 
         db_uni = f'https://s{num_uni}-fr.ogame.gameforge.com/api/serverData.xml'
+        # on enregistre
         urllib.request.urlretrieve(db_uni, f"./xml/uni/{num_uni}.xml")
         
     name_uni = []
@@ -71,7 +86,9 @@ def chargement_uni():
     top1 = []
 
     for num_uni in df_liste_uni['id'].values:
+        # on parse le fichier xml de l'uni
         my_tree = et.parse(f'./xml/uni/{num_uni}.xml')
+        # on y prend les infos qui nous intéressent.. et on les ajoute dans nos différentes listes.
         my_root = my_tree.getroot()
         name_uni.append(my_root[0].text)
         speed_uni.append(my_root[7].text)
@@ -82,7 +99,7 @@ def chargement_uni():
         cdr_def.append(my_root[17].text)
         top1.append(my_root[21].text)
         
-        
+    # on concatène toutes nos listes dans un dataframe
     df_univers = pd.DataFrame([name_uni, speed_uni, speed_flotte_peace, speed_flotte_war, speed_flotte_holding, cdr_flotte, cdr_def, top1],
                             index=['Name', 'Vitesse eco', 'Vitesse allie', 'Vitesse attaque', 'Vitesse statio', 'CDR Flotte', 'CDR Def', 'Top1']).transpose()
     
@@ -90,10 +107,11 @@ def chargement_uni():
     
     return df_univers 
         
-
+# on charge la data
 data, data_pop, cost_v9 = load_data()
 df_univers = chargement_uni()
 
+# Menu sidebar
 with st.sidebar:
     selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition'],
                            icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear'], menu_icon='list', default_index=0,
@@ -104,7 +122,8 @@ with st.sidebar:
         "nav-link-selected": {"background-color": "#2C3845"},
     })
     
-    st.session_state.univers = st.selectbox('Univers', df_univers['Name'])
+    # Variables affichées dans le sidebar, en fonction de l'univers selectionné
+    st.session_state.univers = st.selectbox('Univers', df_univers['Name']) # Selection de l'univers
     st.session_state.vitesse_eco = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse eco'].values[0])
     st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
@@ -114,7 +133,26 @@ with st.sidebar:
 
 
 def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux):
-    
+    """Calcule le cumul des couts d'un batiment ou d'une recherche
+
+    Parameters
+    ----------
+    race : str
+        Race ogame v9
+    dat : str
+        Nom du batiment
+    level_act : int
+        Niveau du batiment actuel
+    level_max : int
+        Niveau du batiment à atteindre (objectif)
+    niveau_monument_rocheux : int
+        Niveau du batiment mouvement rocheux
+
+    Returns
+    -------
+    DataFrame
+        DataFrame comportant les couts par niveau + le total pour chaque type de ressources
+    """
     level_act = level_act + 1
     
     tri = data[data['Name FR'] == dat]
