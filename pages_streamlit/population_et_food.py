@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from streamlit_extras.metric_cards import style_metric_cards
+
+
+
 
 def pop(data):
 
@@ -163,6 +167,8 @@ def pop(data):
 
 
     st.subheader('Population')
+    
+    style_metric_cards(background_color='#03152A', border_color='#0083B9', border_left_color='#0083B9', border_size_px=1, box_shadow=False, border_radius_px=0)
 
     kpi1, kpi2, kpi3 = st.columns(3)
 
@@ -170,13 +176,13 @@ def pop(data):
         pop_max = calcul_pop_max(base_value_pop_max, factor_pop_max, level_residence, bonus_logement_value, marchand)
         st.metric(label='Pop max', value='{:,}'.format(int(pop_max)).replace(',','.'))
         
-    with kpi2:
+    with kpi3:
         conso = conso_nourriture(base_value_conso, factor_conso, level_residence, reduc_conso_value)
         st.metric(label='Conso nourriture', value='{:,}'.format(int(conso)).replace(',','.'))
         
-    with kpi3:
+    with kpi2:
         prod = prod_nourriture(base_value_prod, factor_prod, level_ferme, bonus_prod_value)
-        st.metric(label='Production alimentaire', value='{:,}'.format(int(prod)).replace(',','.'))
+        st.metric(label='Production alimentaire', value='{:,}'.format(int(prod)).replace(',','.'), delta=int(prod)-int(conso))
         
     kpi4, kpi5 = st.columns(2)
 
@@ -185,14 +191,14 @@ def pop(data):
             ratio_nourriture = ratio_nourri(prod, conso)
         except ZeroDivisionError:
             ratio_nourriture = 0
-        st.metric('Ratio population nourri', value=f'{round(ratio_nourriture*100,2)}%')
+        st.metric('Ratio population nourri', value=f'{round(ratio_nourriture*100,2)}%', delta=round(ratio_nourriture*100,2)-100)
         
     with kpi5:
         try:
             pop_max_nourri_possible = pop_max_nourri(pop_max, ratio_nourriture)
         except ZeroDivisionError:
             pop_max_nourri_possible = 0
-        st.metric('Population max nourri', value='{:,}'.format(int(pop_max_nourri_possible)).replace(',','.'))
+        st.metric('Population max nourri', value='{:,}'.format(int(pop_max_nourri_possible)).replace(',','.'), delta=int(pop_max_nourri_possible)-int(pop_max))
         
         
     if ratio_nourriture < 1:

@@ -214,57 +214,61 @@ def calcul_expe():
             barmode="overlay",
             bargap=0.1)
         
-        st.subheader('Vaisseaux')
         
-        vsx1, vsx2 = st.columns(2)
+        tab1, tab2 = st.tabs(['Vaisseaux', 'Ressources'])
         
-        with vsx1:
-            st._legacy_dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], 2400, 560)
-        with vsx2:
-            st.plotly_chart(fig)
+        with tab1:
+        
+            vsx1, vsx2 = st.columns(2)
+            
+            with vsx1:
+                st._legacy_dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], 2400, 560)
+            with vsx2:
+                st.plotly_chart(fig)
+        
         
         
         
         # Ressources
         
-        st.subheader('Ressources')
+        with tab2:
         
-        st.write('Ressources maximales')
-        st.dataframe(df_res)
-        
-        metal_collectable = montant_max - max_metal_with_fdv
-        cristal_collectable = montant_max/2 - max_metal_with_fdv/2
-        deut_collectable = montant_max/3 - max_metal_with_fdv/3
-        
-        cargo_opti_gt = np.ceil(max_metal_with_fdv / df_expe.loc['Grand transporteur', 'fret'])
-        cargo_opti_pt = np.ceil(max_metal_with_fdv / df_expe.loc['Petit transporteur', 'fret'])
-        cargo_opti_eclaireur = np.ceil(max_metal_with_fdv / df_expe.loc['Eclaireur', 'fret'])
-        
-        
-        carg1, carg2, carg3, carg4 = st.columns(4)
-        
-   
-        
-        with carg1:
-            # st.metric('Cargo disponible', int(fret_dispo))
-            st.metric('Cargo disponible', mise_en_forme_number(fret_dispo))
-        with carg2:
-            st.metric('Cargo optimal PT',f'{mise_en_forme_number(cargo_opti_pt)} vaisseaux')
-        with carg3:
-            st.metric('Cargo optimal GT',f'{mise_en_forme_number(cargo_opti_gt)} vaisseaux')
-        with carg4:
-            st.metric('Cargo optimal Eclaireur',f'{mise_en_forme_number(cargo_opti_eclaireur)} vaisseaux')
+            st.write('Ressources maximales')
+            st.dataframe(df_res)
             
-        
-        
-        kpi1, kpi2, kpi3 = st.columns(3)
-        
-        with kpi1:
-            st.metric('Metal collectable', mise_en_forme_number(montant_max), mise_en_forme_number(metal_collectable))
-        with kpi2:
-            st.metric('Cristal collectable', mise_en_forme_number(montant_max/2), mise_en_forme_number(cristal_collectable))
-        with kpi3:
-            st.metric('Deut collectable', mise_en_forme_number(montant_max/3), mise_en_forme_number(deut_collectable))
+            metal_collectable = montant_max - max_metal_with_fdv
+            cristal_collectable = montant_max/2 - max_metal_with_fdv/2
+            deut_collectable = montant_max/3 - max_metal_with_fdv/3
+            
+            cargo_opti_gt = np.ceil(max_metal_with_fdv / df_expe.loc['Grand transporteur', 'fret'])
+            cargo_opti_pt = np.ceil(max_metal_with_fdv / df_expe.loc['Petit transporteur', 'fret'])
+            cargo_opti_eclaireur = np.ceil(max_metal_with_fdv / df_expe.loc['Eclaireur', 'fret'])
+            
+            
+            carg1, carg2, carg3, carg4 = st.columns(4)
+            
+    
+            
+            with carg1:
+                # st.metric('Cargo disponible', int(fret_dispo))
+                st.metric('Cargo disponible', mise_en_forme_number(fret_dispo))
+            with carg2:
+                st.metric('Cargo optimal PT',f'{mise_en_forme_number(cargo_opti_pt)} vaisseaux')
+            with carg3:
+                st.metric('Cargo optimal GT',f'{mise_en_forme_number(cargo_opti_gt)} vaisseaux')
+            with carg4:
+                st.metric('Cargo optimal Eclaireur',f'{mise_en_forme_number(cargo_opti_eclaireur)} vaisseaux')
+                
+            
+            
+            kpi1, kpi2, kpi3 = st.columns(3)
+            
+            with kpi1:
+                st.metric('Metal collectable', mise_en_forme_number(montant_max), mise_en_forme_number(metal_collectable))
+            with kpi2:
+                st.metric('Cristal collectable', mise_en_forme_number(montant_max/2), mise_en_forme_number(cristal_collectable))
+            with kpi3:
+                st.metric('Deut collectable', mise_en_forme_number(montant_max/3), mise_en_forme_number(deut_collectable))
         
         
 
