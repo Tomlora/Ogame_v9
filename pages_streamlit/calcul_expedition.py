@@ -9,7 +9,7 @@ def calcul_expe():
     def mise_en_forme_number(number, type='int'):
         if type == 'int':
             new_number = "{:,}".format(int(number)).replace(',', ' ').replace('.', ',')
-        if type == 'float':
+        elif type == 'float':
             new_number = "{:,}".format(number).replace(',', ' ').replace('.', ',')
         return new_number 
     
@@ -51,6 +51,8 @@ def calcul_expe():
         
             
         st.subheader('Forme de vie')
+        
+        st.info("Pour les bonus Explorateur en détail, il faut aller dans l'onglet Calcul Bonus T3")
         
         bonus_res = st.number_input('Bonus ressources en %', 0.0, value=0.0, format='%.2f', help="10.2% s'écrit 10.2")
         bonus_vdx = st.number_input('Bonus vaisseaux en %', 0.0, value=0.0, format='%.2f', help="10.2% s'écrit 10.2")

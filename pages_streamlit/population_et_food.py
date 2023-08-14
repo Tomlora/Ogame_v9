@@ -16,6 +16,7 @@ def pop(data):
         pop_max = base_value * pow(factor, level) * (level + 1)
 
         bonus_bat = pop_max * bonus_logement
+        
         if marchand:
             classe_marchand = pop_max * 0.1
         else:
@@ -53,13 +54,15 @@ def pop(data):
     st.write("Calcule les statistiques de la population en fonction des différents critères")
 
 
-    st.session_state.race2 = st.selectbox('Selectionner la race.', data['Lifeform'].unique())
+    race = st.radio('Selectionner la race.', data['Lifeform'].unique(), horizontal=True)
     level_residence = st.slider('Niveau résidence', 0,90,0)
     level_ferme = st.slider('Niveau production food', 0, 90, 0)
 
     marchand = st.checkbox('Classe alliance marchand ?')
 
-    if st.session_state['race2'] == 'Humain':
+# -------------------- Parametres --------------------
+
+    if race == 'Humain':
         base_value_pop_max = 210
         factor_pop_max = 1.21
         
@@ -89,7 +92,7 @@ def pop(data):
         
         st.write(bonus_prod_value)
         
-    elif st.session_state['race2'] == 'Méca':
+    elif race == 'Méca':
         
         base_value_pop_max = 500
         factor_pop_max = 1.205
@@ -117,7 +120,7 @@ def pop(data):
         
         st.write(bonus_prod_value)
         
-    elif st.session_state['race2'] == 'Kaelesh':
+    elif race == 'Kaelesh':
         
         base_value_pop_max = 250
         factor_pop_max = 1.21
@@ -144,7 +147,7 @@ def pop(data):
         bonus_prod = 0    
         bonus_prod_value = 0
         
-    elif st.session_state['race2'] == 'Rocas':
+    elif race == 'Rocas':
         
         base_value_pop_max = 150
         factor_pop_max = 1.216
@@ -164,7 +167,7 @@ def pop(data):
         bonus_prod = 0
         bonus_prod_value = 0
         
-
+# --------------------------------------------------
 
     st.subheader('Population')
     

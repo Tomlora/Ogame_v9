@@ -1,9 +1,10 @@
-from asyncio import set_child_watcher
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import urllib
+import urllib.request
+from datetime import timedelta
 
 import xml.etree.ElementTree as et 
 
@@ -13,12 +14,17 @@ from pages_streamlit.reduction_cost import reduc_cost
 from pages_streamlit.slot_recherche import slot
 from pages_streamlit.calcul_expedition import calcul_expe
 from pages_streamlit.temps_exploration import exploration
+from pages_streamlit.calcul_bonus_t3 import calcul_bonus
+from pages_streamlit.prod_planete import calcul_prod
 
-st.set_page_config(
-    page_title="Ogame v9",
-    page_icon="📊",
-    layout="wide",
-)
+try:
+    st.set_page_config(
+        page_title="Ogame v10",
+        page_icon="📊",
+        layout="wide",
+    )
+except:
+    pass
 
 
 
@@ -38,10 +44,23 @@ div[role="listbox"] ul {
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
-st.markdown("<h1 style='text-align: center; color: white;'>Ogame v9 </h1>", unsafe_allow_html=True )
+st.markdown("<h1 style='text-align: center; color: white;'>Ogame v10 </h1>", unsafe_allow_html=True )
+
+        
+@st.cache_data
+def icon(emoji:str):
+    """Montre une emoji en icone de page
+    
+    Args:
+        emoji (str): emoji à afficher, comme :":balloon:" """
+        
+    st.write(
+        f'<span style="font-size: 50px; line-height: 1">{emoji}</span>',
+        unsafe_allow_html=True
+    )
 
 
-@st.cache
+@st.cache_data(show_spinner='Les ordinateurs de bords se préparent...:hourglass:', ttl=timedelta(hours=24))
 def load_data():
     """_summary_
 
@@ -52,14 +71,14 @@ def load_data():
     data_pop
         Data des populations en fonction du niveau du batiments
     cost_v9
-        Cout des batiments v9 (fichier original)
+        Cout des batiments v10 (fichier original)
     """
     data = pd.read_excel('data_cost.xlsx', sheet_name=0)
     data_pop = pd.read_excel('data_cost.xlsx', sheet_name=1)
     cost_v9 = pd.read_excel('cost_v9.xlsx', sheet_name=1)
     return data, data_pop, cost_v9
 
-@st.cache
+@st.cache_data(show_spinner='Nos ordinateurs analysent les univers...⌛', ttl=timedelta(hours=6))
 def chargement_uni():
     # on va chercher la liste des univers
     db_liste_uni = 'https://s190-fr.ogame.gameforge.com/api/universes.xml'
@@ -113,8 +132,8 @@ df_univers = chargement_uni()
 
 # Menu sidebar
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v9', 'Population', 'Reduction cout', 'Slot recherche', 'Expedition'],
-                           icons=["currency-dollar", 'people-fill', 'kanban', 'gear', 'gear'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Slot recherche', 'Expedition', 'Calcul bonus T3', 'Reduction cout'],
+                           icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'gear', 'send', 'kanban', 'graph-down-arrow'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 
@@ -128,11 +147,11 @@ with st.sidebar:
     st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
     st.write(f'Vitesse éco : {st.session_state["vitesse_eco"]} \n \n')
-    st.title('by Tomlora (v1.3)')
+    st.title('by Tomlora (v1.7) [14/08/2023]')
     
 
 
-def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux):
+def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux, millions:bool):
     """Calcule le cumul des couts d'un batiment ou d'une recherche
 
     Parameters
@@ -156,7 +175,7 @@ def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux):
     level_act = level_act + 1
     
     tri = data[data['Name FR'] == dat]
-    
+       
     level_list = []
     metal = []
     crystal = []
@@ -179,42 +198,47 @@ def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux):
     
     df = pd.DataFrame([metal, crystal, deut, energy], columns=level_list, index=['Metal', 'Crystal', 'Deut', 'Energy'])
     
+    
     for column in df.columns:
         df[column] = round(df[column], 3)
+        
+        if millions:
+            df[column] = round(df[column] / 1000,2)
         df[column] = df[column].astype(str)
         
     return df
 
  
-if selected == 'Cout v9':    
+if selected == 'Cout v10':    
     # title du dashboard
 
 
-    st.write("Calcule le cout unitaire et cumulé d'un batiment ou d'une recherche V9")
+    st.write("Calcule le cout unitaire et cumulé d'un batiment ou d'une recherche V10")
 
-    st.session_state.race = st.selectbox('Selectionner la race', data['Lifeform'].unique())
-    st.session_state.type = st.selectbox('Batiment/Recherche', ['Batiment', 'Recherche'])
+    race = st.radio('Selectionner la race', data['Lifeform'].unique(), horizontal=True)
+    type = st.radio('Batiment/Recherche', ['Batiment', 'Recherche'], horizontal=True)
 
-    if st.session_state['type'] == 'Batiment':
+    if type == 'Batiment':
         st.session_state.data_type = data[data['Type'] == 'Building']
     else:
         st.session_state.data_type = data[data['Type'] != 'Building']
         
-    st.session_state.name = st.session_state['data_type'][st.session_state['data_type']['Lifeform'] == st.session_state.race]['Name FR'].unique()
+    st.session_state.name = st.session_state['data_type'][st.session_state['data_type']['Lifeform'] == race]['Name FR'].unique()
 
     name = st.selectbox('Selectionner le batiment', st.session_state['name'])
 
     level_act = st.slider('Level actuel', 0, 90, 0 )
     level_max = st.slider('Level à atteindre', level_act, 90, 0)
+    
+    millions = st.checkbox('Afficher les coûts en millions', help='Si non coché, en milliers')
 
-    if st.session_state['race'] == "Rocas" and st.session_state['type'] == 'Batiment':
+    if race == "Rocas" and type == 'Batiment':
         bonus_reduc = st.slider('Niveau Monument Rocheux', 0, 30, 0)
         st.write(bonus_reduc)
-        st.write('Note : En attente de la confirmation de GameForge sur la prise en compte du centre des minéraux. En conséquence, il y a un léger écart concernant les deux premiers batiments')
     else:
         bonus_reduc = 0
         
-    if st.session_state['type'] == 'Recherche':
+    if type == 'Recherche':
         bonus_reduc = st.slider('Centre de recherche', 0, 30, 0)
         st.session_state.centre_race = st.selectbox('Centre de recherche ', data['Lifeform'].unique())
         
@@ -228,7 +252,7 @@ if selected == 'Cout v9':
         
         
 
-    df_cout = cost_cumul(st.session_state['race'], name, level_act, level_max, bonus_reduc)
+    df_cout = cost_cumul(race, name, level_act, level_max, bonus_reduc, millions)
 
 
 
@@ -236,11 +260,15 @@ if selected == 'Cout v9':
 
     fig = px.pie(df_cout, df_cout.index, 'Cumul', color='Cumul', color_discrete_sequence=['brown', 'cyan', 'green', '#FF7F00'])
 
-    st.write(fig)
+    st.plotly_chart(fig)
+
 
 
 elif selected == 'Population':
     pop(data)
+    
+elif selected == 'Production':
+    calcul_prod(data)
     
 elif selected == 'Reduction cout':
     reduc_cost(data)
@@ -253,3 +281,6 @@ elif selected == 'Expedition':
     
 elif selected == 'Exploration':
     exploration()
+    
+elif selected == 'Calcul bonus T3':
+    calcul_bonus()

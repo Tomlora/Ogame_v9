@@ -18,14 +18,14 @@ def to_excel(df):
             len(str(series.name))  # len of column name/header
             )) + 1  # adding a little extra space
         worksheet.set_column(idx, idx, max_len)  # set column width  
-    writer.save()
+    writer.close()
     processed_data = output.getvalue()
     return processed_data
 
 
 def slot(data, cost_v9):
 
-    st.subheader('Choix des technologies v9')
+    st.subheader('Choix des technologies v10')
 
     data = data.merge(cost_v9[['Name EN', 'bonus 1 base value', 'bonus 1 max']], on='Name EN')
 
@@ -37,16 +37,19 @@ def slot(data, cost_v9):
 
     if value <= 6:
         niv = 1
+        ecart_tech = value
     elif value > 6 and value <= 12:
         niv = 2
+        ecart_tech = value - 6
     else:
         niv = 3
+        ecart_tech = value - 12
         
     pop_requise = ['0', '200.000', '300.000', '400.000', '500.000', '750.000', '1.000.000',
                 '1.200.000', '3.000.000', '5.000.000', '7.000.000', '9.000.000', '11.000.000',
                 '13.000.000', '26.000.000', '56.000.000', '112.000.000', '224.000.000', '448.000.000']
         
-    st.markdown(f'Technologie de palier {niv}')
+    st.markdown(f'Technologie {niv}.{ecart_tech} (Palier {niv})')
 
     st.markdown(f'Population de niveau {niv} requise : {pop_requise[value]}')
 
