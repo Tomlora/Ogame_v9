@@ -11,7 +11,7 @@ Par conséquent, j'ai proposé un dashboard streamlit permettant d'aider les jou
 
 ## Lien 
 
-[Plateforme streamlit](https://tomlora.herokuapp.com/)
+[Plateforme streamlit](https://ogamev10.streamlit.app/)
 
 ## Ressources
 
