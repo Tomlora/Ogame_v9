@@ -179,7 +179,7 @@ with st.sidebar:
     st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
     st.write(f'Vitesse éco : {st.session_state["vitesse_eco"]} \n \n')
-    st.title('by Tomlora (v1.7) [14/08/2023]')
+    st.title('by Tomlora (v1.8) [16/11/2023]')
     
 
 
