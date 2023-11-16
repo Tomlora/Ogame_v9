@@ -16,6 +16,7 @@ from pages_streamlit.calcul_expedition import calcul_expe
 from pages_streamlit.temps_exploration import exploration
 from pages_streamlit.calcul_bonus_t3 import calcul_bonus
 from pages_streamlit.prod_planete import calcul_prod
+from pages_streamlit.scanner_ina import inactif
 
 try:
     st.set_page_config(
@@ -45,6 +46,19 @@ div[role="listbox"] ul {
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 st.markdown("<h1 style='text-align: center; color: white;'>Ogame v10 </h1>", unsafe_allow_html=True )
+
+type = {0 : 'Total'}
+        # 1 : 'Eco',
+        # 2 : 'Research',
+        # 3 : 'Militaire',
+        # 4 : 'Militaire lost',
+        # 5 : 'Militaire construit',
+        # 6 : 'Militaire Détruit',
+        # 7 : 'Honor',
+        # 8 : 'FdV',
+        # 9 : 'Eco FdV',
+        # 10 : 'Techno FdV',
+        # 11 : 'Exploration FdV'}
 
         
 @st.cache_data
@@ -79,7 +93,7 @@ def load_data():
     return data, data_pop, cost_v9
 
 @st.cache_data(show_spinner='Nos ordinateurs analysent les univers...⌛', ttl=timedelta(hours=6))
-def chargement_uni():
+def chargement_uni(type):
     # on va chercher la liste des univers
     db_liste_uni = 'https://s190-fr.ogame.gameforge.com/api/universes.xml'
     # on enregistre le fichier
@@ -94,7 +108,7 @@ def chargement_uni():
         db_uni = f'https://s{num_uni}-fr.ogame.gameforge.com/api/serverData.xml'
         # on enregistre
         urllib.request.urlretrieve(db_uni, f"./xml/uni/{num_uni}.xml")
-        
+         
     name_uni = []
     speed_uni = []
     speed_flotte_peace = []
@@ -103,6 +117,9 @@ def chargement_uni():
     cdr_flotte = []
     cdr_def = []
     top1 = []
+    
+
+
 
     for num_uni in df_liste_uni['id'].values:
         # on parse le fichier xml de l'uni
@@ -118,22 +135,36 @@ def chargement_uni():
         cdr_def.append(my_root[17].text)
         top1.append(my_root[21].text)
         
+
+        
     # on concatène toutes nos listes dans un dataframe
-    df_univers = pd.DataFrame([name_uni, speed_uni, speed_flotte_peace, speed_flotte_war, speed_flotte_holding, cdr_flotte, cdr_def, top1],
-                            index=['Name', 'Vitesse eco', 'Vitesse allie', 'Vitesse attaque', 'Vitesse statio', 'CDR Flotte', 'CDR Def', 'Top1']).transpose()
+    df_univers = pd.DataFrame([df_liste_uni['id'].values, name_uni, speed_uni, speed_flotte_peace, speed_flotte_war, speed_flotte_holding, cdr_flotte, cdr_def, top1],
+                            index=['id', 'Name', 'Vitesse eco', 'Vitesse allie', 'Vitesse attaque', 'Vitesse statio', 'CDR Flotte', 'CDR Def', 'Top1']).transpose()
     
     df_univers['Top1'] = df_univers['Top1'].astype('float') 
+    
+    for num_uni in df_liste_uni['id'].values:
+        db_players = f'https://s{num_uni}-fr.ogame.gameforge.com/api/players.xml'  # une fois par jour
+        db_ladder = f'https://s{num_uni}-fr.ogame.gameforge.com/api/highscore.xml?category=1&type=1' # par heure
+        # category : 1 = Player, 2 = Alliance
+        # On récupère la data        
+        urllib.request.urlretrieve(db_players, f"xml/players_{num_uni}.xml")
+    
+        for key, value in type.items():
+            db = f'https://s{num_uni}-fr.ogame.gameforge.com/api/highscore.xml?category=1&type={key}'
+            urllib.request.urlretrieve(db, f"xml/ladder_{num_uni}_{value}.xml")
+    
     
     return df_univers 
         
 # on charge la data
 data, data_pop, cost_v9 = load_data()
-df_univers = chargement_uni()
+df_univers = chargement_uni(type)
 
 # Menu sidebar
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Slot recherche', 'Expedition', 'Calcul bonus T3', 'Reduction cout'],
-                           icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'gear', 'send', 'kanban', 'graph-down-arrow'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Scanner inactif', 'Slot recherche', 'Expedition', 'Calcul bonus T3', 'Reduction cout'],
+                           icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'search', 'gear', 'send', 'kanban', 'graph-down-arrow'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 
@@ -143,6 +174,7 @@ with st.sidebar:
     
     # Variables affichées dans le sidebar, en fonction de l'univers selectionné
     st.session_state.univers = st.selectbox('Univers', df_univers['Name']) # Selection de l'univers
+    st.session_state.id_univers = int(df_univers[df_univers['Name'] == st.session_state['univers']]['id'].values[0])
     st.session_state.vitesse_eco = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse eco'].values[0])
     st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
@@ -269,6 +301,9 @@ elif selected == 'Population':
     
 elif selected == 'Production':
     calcul_prod(data)
+    
+elif selected == 'Scanner inactif':
+    inactif(type)
     
 elif selected == 'Reduction cout':
     reduc_cost(data)
