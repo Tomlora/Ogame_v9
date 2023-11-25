@@ -274,10 +274,12 @@ if selected == 'Cout v10':
         bonus_reduc = st.slider('Centre de recherche', 0, 30, 0)
         st.session_state.centre_race = st.selectbox('Centre de recherche ', data['Lifeform'].unique())
         
-        if st.session_state['centre_race'] == 'Méca' or st.session_state['centre_race'] == 'Kaelesh':
-            facteur = 0.25 # reduction de 0,25 par niv
-        else:
-            facteur = 0.5 # reduction de 0,5 par niv
+        # if st.session_state['centre_race'] == 'Méca' or st.session_state['centre_race'] == 'Kaelesh':
+        #     facteur = 0.25 # reduction de 0,25 par niv
+        # else:
+        #     facteur = 0.5 # reduction de 0,5 par niv
+        
+        facteur = 0.25
         
         bonus_reduc = bonus_reduc * facteur
         st.write(bonus_reduc) 
