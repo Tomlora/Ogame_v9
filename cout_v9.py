@@ -296,7 +296,7 @@ if selected == 'Cout v10':
                  df_cout.index,
                  'Cumul',
                  color=df_cout.index,
-                 title=f'Coût {name}'
+                 title=f'Coût {name}',
                  color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
     st.plotly_chart(fig, theme=None)
