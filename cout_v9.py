@@ -292,7 +292,7 @@ if selected == 'Cout v10':
 
     st.write(df_cout)
 
-    fig = px.pie(df_cout, df_cout.index, 'Cumul', color='Cumul', color_discrete_sequence=['brown', 'cyan', 'green', '#FF7F00'])
+    fig = px.pie(df_cout, df_cout.index, 'Cumul', color='Cumul', color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
     st.plotly_chart(fig)
 
