@@ -294,7 +294,7 @@ if selected == 'Cout v10':
 
     fig = px.pie(df_cout, df_cout.index, 'Cumul', color='Cumul', color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, theme=None)
 
 
 
