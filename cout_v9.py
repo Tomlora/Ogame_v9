@@ -292,7 +292,7 @@ if selected == 'Cout v10':
 
     st.write(df_cout)
     
-    if df_cout['Cumul'].sum() != 0:
+    if df_cout['Cumul'].sum() != 0.0:
 
         fig = px.pie(df_cout,
                     df_cout.index,
