@@ -291,15 +291,17 @@ if selected == 'Cout v10':
 
 
     st.write(df_cout)
+    
+    if df_cout['Cumul'].sum() != 0:
 
-    fig = px.pie(df_cout,
-                 df_cout.index,
-                 'Cumul',
-                 color=df_cout.index,
-                 title=f'Coût {name}',
-                 color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
+        fig = px.pie(df_cout,
+                    df_cout.index,
+                    'Cumul',
+                    color=df_cout.index,
+                    title=f'Coût {name}',
+                    color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
-    st.plotly_chart(fig, theme=None)
+        st.plotly_chart(fig, theme=None)
 
 
 
