@@ -257,7 +257,7 @@ if selected == 'Cout v10':
         
     st.session_state.name = st.session_state['data_type'][st.session_state['data_type']['Lifeform'] == race]['Name FR'].unique()
 
-    name = st.selectbox('Selectionner le batiment', st.session_state['name'])
+    name = st.selectbox(f'Selectionner le {type}', st.session_state['name'])
 
     level_act = st.slider('Level actuel', 0, 90, 0 )
     level_max = st.slider('Level à atteindre', level_act, 90, 0)
@@ -292,7 +292,12 @@ if selected == 'Cout v10':
 
     st.write(df_cout)
 
-    fig = px.pie(df_cout, df_cout.index, 'Cumul', color=df_cout.index, color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
+    fig = px.pie(df_cout,
+                 df_cout.index,
+                 'Cumul',
+                 color=df_cout.index,
+                 title=f'Coût {name}'
+                 color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
     st.plotly_chart(fig, theme=None)
 
