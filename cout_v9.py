@@ -179,7 +179,7 @@ with st.sidebar:
     st.session_state.vitesse_allie = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Vitesse allie'].values[0])
     st.session_state.top1 = int(df_univers[df_univers['Name'] == st.session_state['univers']]['Top1'].values[0])
     st.write(f'Vitesse éco : {st.session_state["vitesse_eco"]} \n \n')
-    st.title('by Tomlora (v1.8) [16/11/2023]')
+    st.title('by Tomlora (v1.8) [25/11/2023]')
     
 
 
@@ -288,20 +288,16 @@ if selected == 'Cout v10':
 
     df_cout = cost_cumul(race, name, level_act, level_max, bonus_reduc, millions)
 
-
-
     st.write(df_cout)
     
-    if df_cout['Cumul'].sum() != 0.0:
-
-        fig = px.pie(df_cout,
+    fig = px.pie(df_cout,
                     df_cout.index,
                     'Cumul',
                     color=df_cout.index,
                     title=f'Coût {name}',
                     color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
-        st.plotly_chart(fig, theme=None)
+    st.plotly_chart(fig, theme=None)
 
 
 
