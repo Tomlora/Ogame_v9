@@ -49,7 +49,7 @@ def inactif(type):
 
     # df
     
-    points_mini = st.number_input('Nombre de points minimum', min_value=50000, max_value=int(df_ina['points_Total'].max()), value=50000)
+    points_mini = st.number_input('Nombre de points minimum', min_value=50000, max_value=int(df_ina['points_Total'].max()), value=500000)
     
     df_ina_filter = df_ina[df_ina['points_Total'] >= points_mini]
     st.subheader(f'Inactifs : {df_ina_filter.shape[0]}')
