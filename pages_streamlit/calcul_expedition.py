@@ -206,8 +206,8 @@ def calcul_expe():
             if df_expe.loc[vsx, 'Vaisseau récupérable'] > 0:
                 fig.add_trace(go.Histogram(histfunc='sum',
                 x=[vsx],
-                y=[df_expe.loc[vsx, 'Vaisseau récupérable']],
-                name='Vaisseau récupérable',
+                y=[df_expe.loc[vsx, 'Total']],
+                name='Vaisseaux récupérables',
                 texttemplate="%{y}",
                 marker_color = '#0000CC',
                 showlegend=showlegend))
@@ -215,7 +215,7 @@ def calcul_expe():
                 fig.add_trace(go.Histogram(histfunc='sum',
                         x=[vsx],
                         y=[df_expe.loc[vsx, 'Forme de vie']],
-                        name="Forme de vie",
+                        name="Dont Bonus Forme de vie",
                         texttemplate="%{y}",
                         marker_color = '#00BFFF',
                         showlegend=showlegend))
@@ -236,7 +236,11 @@ def calcul_expe():
             vsx1, vsx2 = st.columns(2)
             
             with vsx1:
-                st.dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], use_container_width=True, height=560)
+                df_expe_format = df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']].copy()
+                
+                for col in ['Vaisseau récupérable', 'Forme de vie', 'Total']:
+                    df_expe_format[col] = df_expe_format[col].apply(lambda x : mise_en_forme_number(x))
+                st.dataframe(df_expe_format, use_container_width=True, height=560)
             with vsx2:
                 st.plotly_chart(fig)
         
@@ -251,7 +255,9 @@ def calcul_expe():
             with vsx3:
                 df_expe_copy = df_expe.copy()
                 df_expe_copy.loc['Total'] = df_expe_copy.sum(axis=0)
-                st.dataframe(df_expe_copy[['Total', 'metal_total', 'cristal_total', 'deut_total']], use_container_width=True, height=600)
+                for col in ['Total', 'metal_total', 'cristal_total', 'deut_total']:
+                    df_expe_copy[col] = df_expe_copy[col].apply(lambda x : mise_en_forme_number(x))
+                st.dataframe(df_expe_copy[['Total', 'metal_total', 'cristal_total', 'deut_total']], use_container_width=True, height=605)
             with vsx4:
                 
                 fig_ressource = go.Figure(data=[go.Pie(labels=['metal', 'cristal', 'deut'], values=[df_expe['metal_total'].sum(),
@@ -267,6 +273,9 @@ def calcul_expe():
         with tab2:
         
             st.write('Ressources maximales')
+            
+            for col in ['Ressources', 'Forme de vie', 'Total']:
+                df_res[col] = df_res[col].apply(lambda x : mise_en_forme_number(x))
             st.dataframe(df_res)
             
             metal_collectable = montant_max - max_metal_with_fdv
