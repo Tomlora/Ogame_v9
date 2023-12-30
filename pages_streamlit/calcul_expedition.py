@@ -3,8 +3,12 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
+from streamlit_extras.metric_cards import style_metric_cards
+
 
 def calcul_expe():
+    
+    style_metric_cards(background_color='#03152A', border_color='#0083B9', border_left_color='#0083B9', border_size_px=1, box_shadow=False, border_radius_px=0)
     
     def mise_en_forme_number(number, type='int'):
         if type == 'int':
@@ -182,6 +186,10 @@ def calcul_expe():
         df_expe['Total'] = np.int64(df_expe['Vaisseau récupérable'] + df_expe['Forme de vie'])
         
         
+        df_expe['metal_total'] = df_expe['cout_metal'] * df_expe['Total']
+        df_expe['cristal_total'] = df_expe['cout_cristal'] * df_expe['Total']
+        df_expe['deut_total'] = df_expe['cout_deut'] * df_expe['Total']
+        
         fig = go.Figure()
         i = 0
         for vsx in ['Chasseur Léger', 'Chasseur Lourd', 'Croiseur', 'Vaisseau de bataille', 'Traqueur',
@@ -213,6 +221,7 @@ def calcul_expe():
                 i += 1
 
         fig.update_layout(
+            title='Quantité de vaisseaux',
             barmode="overlay",
             bargap=0.1)
         
@@ -221,6 +230,7 @@ def calcul_expe():
         
         with tab1:
         
+            st.subheader('Vaisseaux')
             vsx1, vsx2 = st.columns(2)
             
             with vsx1:
@@ -229,7 +239,20 @@ def calcul_expe():
                 st.plotly_chart(fig)
         
         
+            st.subheader('Ressources (vaisseaux)')
+            vsx3, vsx4 = st.columns(2)
         
+            with vsx3:
+                st._legacy_dataframe(df_expe[['Total', 'metal_total', 'cristal_total', 'deut_total']], 2400, 560)
+            with vsx4:
+                
+                fig_ressource = go.Figure(data=[go.Pie(labels=['metal', 'cristal', 'deut'], values=[df_expe['metal_total'].sum(),
+                                                                                                    df_expe['cristal_total'].sum(),
+                                                                                                    df_expe['deut_total'].sum()])])
+                fig_ressource.update_layout(
+                title='Quantité de vaisseaux sous forme de ressources')              
+                
+                st.plotly_chart(fig_ressource)
         
         # Ressources
         
