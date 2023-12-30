@@ -163,8 +163,8 @@ df_univers = chargement_uni(type)
 
 # Menu sidebar
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Scanner inactif', 'Slot recherche', 'Expedition', 'Calcul bonus T3', 'Reduction cout'],
-                           icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'search', 'gear', 'send', 'kanban', 'graph-down-arrow'], menu_icon='list', default_index=0,
+    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Scanner inactif', 'Slot recherche', 'Expedition', 'Reduction cout'],
+                           icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'search', 'gear', 'send', 'graph-down-arrow'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
         "icon": {"color": "#0083B9", "font-size": "28px"}, 
