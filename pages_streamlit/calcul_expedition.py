@@ -86,6 +86,10 @@ def calcul_expe():
         recycleur = st.number_input('Recycleur', 0, value=0)
         sonde = st.number_input('Sonde', 0, value=0)
         
+        st.subheader('Paramètres supplémentaires')
+        
+        taux_ferrailleur = st.slider('Taux Ferrailleur (%)', min_value=35, max_value=100, value=100, help='Ce paramètre impacte le tableau Ressources (vaisseaux), vous permettant de savoir les ressources collectables via le ferrailleur.')
+        
         submitted = st.form_submit_button('Valider')
         
     if submitted:
@@ -186,9 +190,7 @@ def calcul_expe():
         df_expe['Total'] = np.int64(df_expe['Vaisseau récupérable'] + df_expe['Forme de vie'])
         
         
-        df_expe['metal_total'] = df_expe['cout_metal'] * df_expe['Total']
-        df_expe['cristal_total'] = df_expe['cout_cristal'] * df_expe['Total']
-        df_expe['deut_total'] = df_expe['cout_deut'] * df_expe['Total']
+
         
         fig = go.Figure()
         i = 0
@@ -240,6 +242,10 @@ def calcul_expe():
         
         
             st.subheader('Ressources (vaisseaux)')
+            
+            df_expe['metal_total'] = (df_expe['cout_metal'] * df_expe['Total']) *(taux_ferrailleur / 100)
+            df_expe['cristal_total'] = (df_expe['cout_cristal'] * df_expe['Total']) *(taux_ferrailleur / 100)
+            df_expe['deut_total'] = (df_expe['cout_deut'] * df_expe['Total']) *(taux_ferrailleur / 100)
             vsx3, vsx4 = st.columns(2)
         
             with vsx3:
