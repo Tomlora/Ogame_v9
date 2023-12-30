@@ -243,7 +243,9 @@ def calcul_expe():
             vsx3, vsx4 = st.columns(2)
         
             with vsx3:
-                st.dataframe(df_expe[['Total', 'metal_total', 'cristal_total', 'deut_total']], use_container_width=True, height=560)
+                df_expe_copy = df_expe.copy()
+                df_expe_copy.loc['Total'] = df_expe_copy.sum(axis=0)
+                st.dataframe(df_expe_copy[['Total', 'metal_total', 'cristal_total', 'deut_total']], use_container_width=True, height=600)
             with vsx4:
                 
                 fig_ressource = go.Figure(data=[go.Pie(labels=['metal', 'cristal', 'deut'], values=[df_expe['metal_total'].sum(),
