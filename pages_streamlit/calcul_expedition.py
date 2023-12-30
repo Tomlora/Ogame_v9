@@ -234,7 +234,7 @@ def calcul_expe():
             vsx1, vsx2 = st.columns(2)
             
             with vsx1:
-                st._legacy_dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], 2400, 560)
+                st.dataframe(df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']], use_container_width=True)
             with vsx2:
                 st.plotly_chart(fig)
         
@@ -243,7 +243,7 @@ def calcul_expe():
             vsx3, vsx4 = st.columns(2)
         
             with vsx3:
-                st._legacy_dataframe(df_expe[['Total', 'metal_total', 'cristal_total', 'deut_total']], 2400, 560)
+                st.dataframe(df_expe[['Total', 'metal_total', 'cristal_total', 'deut_total']], use_container_width=True)
             with vsx4:
                 
                 fig_ressource = go.Figure(data=[go.Pie(labels=['metal', 'cristal', 'deut'], values=[df_expe['metal_total'].sum(),
