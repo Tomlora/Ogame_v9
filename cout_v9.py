@@ -316,7 +316,9 @@ if selected == 'Cout v10':
                                   line={'color' : color_dict[res]}) ) 
 
  
-    fig_res.update_layout(title='Evolution Coût')
+    fig_res.update_layout(title='Evolution Coût',
+                          xaxis_title='Niveau',
+                          yaxis_title='Ressources')
     fig_res.update_xaxes(tickmode='linear')
     fig_res.update_yaxes(showgrid=False) 
     col2.plotly_chart(fig_res)
