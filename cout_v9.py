@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 import urllib.request
 from datetime import timedelta
 
@@ -290,6 +291,8 @@ if selected == 'Cout v10':
 
     st.write(df_cout)
     
+    col1, col2 = st.columns(2)
+    
     fig = px.pie(df_cout,
                     df_cout.index,
                     'Cumul',
@@ -297,7 +300,27 @@ if selected == 'Cout v10':
                     title=f'Coût {name}',
                     color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
-    st.plotly_chart(fig, theme=None)
+    col1.plotly_chart(fig, theme=None)
+    
+    df_cout_t = df_cout.T.copy()
+    
+    df_cout_t.drop('Cumul', axis=0, inplace=True)
+    
+    fig_res = go.Figure()
+    
+    color_dict = {'Metal' : 'brown', 'Crystal' : 'cyan', 'Deut' : 'green', 'Energy' : 'orange'}
+    for res in ['Metal', 'Crystal', 'Deut', 'Energy']:
+        fig_res.add_trace(go.Line(x=df_cout_t.index,
+                                  y=df_cout_t[res],
+                                  name=res,
+                                  line={'color' : color_dict[res]}) ) 
+
+ 
+    fig_res.update_layout(title='Evolution Coût')
+    fig_res.update_xaxes(tickmode='linear')
+    fig_res.update_yaxes(showgrid=False) 
+    col2.plotly_chart(fig_res)
+
 
 
 
