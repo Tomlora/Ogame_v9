@@ -235,7 +235,7 @@ def calcul_prod(data):
     colored_header('Objets', description='', color_name='orange-70')    
     with st.expander('Boosters'):
             
-        value_booster = [0, 10, 20, 40]
+        value_booster = [0, 10, 20, 30, 40]
         ratio_metal = st.radio('Booster metal', value_booster, 0, horizontal=True)
         ratio_cristal = st.radio('Booster cristal', value_booster, 0, horizontal=True)
         ratio_deut = st.radio('Booster deut', value_booster, 0, horizontal=True)
