@@ -41,7 +41,7 @@ def calcul_expe():
             points_top_1 = '<10k'
      
         st.markdown(f'Palier : **{points_top_1}** || (Points du top 1 : **{mise_en_forme_number(st.session_state["top1"])}**)')
-        tech_hyperespace = st.slider('Technologie Hyperespace', 0, 20, 1)
+        tech_hyperespace = st.slider('Technologie Hyperespace', 0, 30, 1)
         bonus_fret = tech_hyperespace * 0.05
         
         st.subheader('Classe')
