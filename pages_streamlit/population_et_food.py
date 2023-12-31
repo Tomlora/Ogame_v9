@@ -61,7 +61,8 @@ def pop(data):
     level_residence = st.slider('Niveau résidence', 0,90,0)
     level_ferme = st.slider('Niveau production food', 0, 90, 0)
 
-    marchand = st.checkbox('Classe alliance marchand ?')
+    # marchand = st.checkbox('Classe alliance marchand ?')
+    marchand = False
 
 # -------------------- Parametres --------------------
 
