@@ -70,33 +70,32 @@ def slot(data, cost_v9):
     st.write('------------------')
     
     with st.expander('Faire son choix'):
+        race = st.radio('Race', data_research['Lifeform'].unique(), horizontal=True)
+            
+        # Filtre sur le niveau des recherches    
+        col1, col2, col3 = st.columns(3)
+        niv1 = col1.checkbox('Tech niveau 1', value=True)
+        niv2 = col2.checkbox('Tech niveau 2', value=True)
+        niv3 = col3.checkbox('Tech niveau 3', value=True)
+            
+        range_slot = []
+            
+        if niv1 == True:
+            range_slot += list(range(1,7))
+        if niv2 == True:
+            range_slot += list(range(7,13))
+        if niv3 == True:
+            range_slot += list(range(13,19))
+            
         with st.form('Formulaire'):
             
-            race = st.radio('Race', data_research['Lifeform'].unique(), horizontal=True)
-            tech1 = st.selectbox('Slot 1', data_research[data_research['Type'] == f'Tech 1']['Name FR'])
-            tech2 = st.selectbox('Slot 2', data_research[data_research['Type'] == f'Tech 2']['Name FR'])
-            tech3 = st.selectbox('Slot 3', data_research[data_research['Type'] == f'Tech 3']['Name FR'])
-            tech4 = st.selectbox('Slot 4', data_research[data_research['Type'] == f'Tech 4']['Name FR'])
-            tech5 = st.selectbox('Slot 5', data_research[data_research['Type'] == f'Tech 5']['Name FR'])
-            tech6 = st.selectbox('Slot 6', data_research[data_research['Type'] == f'Tech 6']['Name FR'])
-            tech7 = st.selectbox('Slot 7', data_research[data_research['Type'] == f'Tech 7']['Name FR'])
-            tech8 = st.selectbox('Slot 8', data_research[data_research['Type'] == f'Tech 8']['Name FR'])
-            tech9 = st.selectbox('Slot 9', data_research[data_research['Type'] == f'Tech 9']['Name FR'])
-            tech10 = st.selectbox('Slot 10', data_research[data_research['Type'] == f'Tech 10']['Name FR'])
-            tech11 = st.selectbox('Slot 11', data_research[data_research['Type'] == f'Tech 11']['Name FR'])
-            tech12 = st.selectbox('Slot 12', data_research[data_research['Type'] == f'Tech 12']['Name FR'])
-            tech13 = st.selectbox('Slot 13', data_research[data_research['Type'] == f'Tech 13']['Name FR'])
-            tech14 = st.selectbox('Slot 14', data_research[data_research['Type'] == f'Tech 14']['Name FR'])
-            tech15 = st.selectbox('Slot 15', data_research[data_research['Type'] == f'Tech 15']['Name FR'])
-            tech16 = st.selectbox('Slot 16', data_research[data_research['Type'] == f'Tech 16']['Name FR'])
-            tech17 = st.selectbox('Slot 17', data_research[data_research['Type'] == f'Tech 17']['Name FR'])
-            tech18 = st.selectbox('Slot 18', data_research[data_research['Type'] == f'Tech 18']['Name FR'])
-            
+            liste_tech = [st.selectbox(f'Slot {number}', data_research[data_research['Type'] == f'Tech {number}']['Name FR']) for number in range_slot]
+
             submitted = st.form_submit_button('Valider')
             
-        if submitted: # tout à faire
-                tech_all = [tech1, tech2, tech3, tech4, tech5, tech6, tech7, tech8, tech9, tech10, tech11, tech12, tech13, tech14, tech15, tech16, tech17, tech18]
+        if submitted:
                 
+                tech_all = liste_tech
                 df_selected = data_research[data_research['Name FR'].isin(tech_all)]
                 
                 # on calcule le nombre d'artefacts nécessaires
