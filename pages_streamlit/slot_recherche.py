@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 from pyxlsb import open_workbook as open_xlsb
+import numpy as np
 
 def to_excel(df):
     output = BytesIO()
@@ -70,6 +71,8 @@ def slot(data, cost_v9):
     
     with st.expander('Faire son choix'):
         with st.form('Formulaire'):
+            
+            race = st.radio('Race', data_research['Lifeform'].unique(), horizontal=True)
             tech1 = st.selectbox('Slot 1', data_research[data_research['Type'] == f'Tech 1']['Name FR'])
             tech2 = st.selectbox('Slot 2', data_research[data_research['Type'] == f'Tech 2']['Name FR'])
             tech3 = st.selectbox('Slot 3', data_research[data_research['Type'] == f'Tech 3']['Name FR'])
@@ -96,6 +99,28 @@ def slot(data, cost_v9):
                 
                 df_selected = data_research[data_research['Name FR'].isin(tech_all)]
                 
+                # on calcule le nombre d'artefacts nécessaires
+                def niveau(x):
+                    if x in [f'Tech {niv}' for niv in range(0,7)]:
+                        return 1
+                    elif x in [f'Tech {niv}' for niv in range(7,13)]:
+                        return 2
+                    elif x in [f'Tech {niv}' for niv in range(13,19)]:
+                        return 3
+                
+                # niveau de la recherche, qui permettra d'évaluer le nombre d'artefacts
+                df_selected['Niveau'] = df_selected['Type'].apply(lambda x : niveau(x))
+                              
+                cout_dict = {1 : 200, 2: 400, 3: 600}
+
+                df_selected['Cout_artefact'] = df_selected['Niveau'].apply(lambda x : cout_dict[x])
+                
+                # si c'est notre race, cela coutera 0
+                df_selected['Cout_artefact'] = np.where(df_selected['Lifeform'] == race, 0, df_selected['Cout_artefact'])
+                
+                # total
+                cout_arte = df_selected['Cout_artefact'].sum()
+                
                 # On sort sur les tech
                 df_selected['sort'] = df_selected['Type'].str.extract('(\d+)', expand=False).astype(int)
                 df_selected.sort_values('sort',inplace=True, ascending=True)
@@ -104,11 +129,13 @@ def slot(data, cost_v9):
                 
                 # df_selected.sort_values(['Type'], inplace=True)
                 
-                st.dataframe(df_selected)
+                st.dataframe(df_selected, use_container_width=True)
                 
                 st.write('Par race')
                 
                 st.write(df_selected['Lifeform'].value_counts())
+                
+                st.info(f'Cela coutera {cout_arte} artefacts.')
                 
                 # download
                 
