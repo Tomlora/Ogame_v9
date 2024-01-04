@@ -238,8 +238,13 @@ def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux, million
         if millions:
             df[column] = round(df[column] / 1000,2)
         df[column] = df[column].astype(str)
+    
+    if millions:
+        unite_de_mesure = 'millions'  
+    else:  
+        unite_de_mesure = 'milliers'
         
-    return df
+    return df, unite_de_mesure
 
  
 if selected == 'Cout v10':    
@@ -288,7 +293,7 @@ if selected == 'Cout v10':
         
         
 
-    df_cout = cost_cumul(race, name, level_act, level_max, bonus_reduc, millions)
+    df_cout, unite_de_mesure = cost_cumul(race, name, level_act, level_max, bonus_reduc, millions)
     
     df_cout_str = df_cout.copy()
     
@@ -297,10 +302,10 @@ if selected == 'Cout v10':
     
     col1, col2, col3, col4 = st.columns(4)
     
-    col1.metric('Metal nécessaire', df_cout.loc['Metal', 'Cumul'])
-    col2.metric('Cristal nécessaire', df_cout.loc['Crystal', 'Cumul'])
-    col3.metric('Deut nécessaire', df_cout.loc['Deut', 'Cumul'])
-    col4.metric('Energie nécessaire', df_cout.loc['Energy', 'Cumul'])
+    col1.metric(f'Metal nécessaire ({unite_de_mesure})', df_cout.loc['Metal', 'Cumul'])
+    col2.metric(f'Cristal nécessaire ({unite_de_mesure})', df_cout.loc['Crystal', 'Cumul'])
+    col3.metric(f'Deut nécessaire ({unite_de_mesure})', df_cout.loc['Deut', 'Cumul'])
+    col4.metric(f'Energie nécessaire ({unite_de_mesure})', df_cout.loc['Energy', 'Cumul'])
     
     col1_graph, col2_graph = st.columns(2)
     
@@ -327,7 +332,7 @@ if selected == 'Cout v10':
                                   line={'color' : color_dict[res]}) ) 
 
  
-    fig_res.update_layout(title='Evolution Coût',
+    fig_res.update_layout(title=f'Evolution Coût ({unite_de_mesure})',
                           xaxis_title='Niveau',
                           yaxis_title='Ressources')
     fig_res.update_xaxes(tickmode='linear')
