@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import urllib.request
 from datetime import timedelta
-
+from streamlit_extras.metric_cards import style_metric_cards
 import xml.etree.ElementTree as et 
 
 from streamlit_option_menu import option_menu
@@ -245,7 +245,8 @@ def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux, million
 if selected == 'Cout v10':    
     # title du dashboard
 
-
+    style_metric_cards(background_color='#03152A', border_color='#0083B9', border_left_color='#0083B9', border_size_px=1, box_shadow=False, border_radius_px=0)
+    
     st.write("Calcule le cout unitaire et cumulé d'un batiment ou d'une recherche V10")
 
     race = st.radio('Selectionner la race', data['Lifeform'].unique(), horizontal=True)
@@ -288,10 +289,20 @@ if selected == 'Cout v10':
         
 
     df_cout = cost_cumul(race, name, level_act, level_max, bonus_reduc, millions)
-
-    st.write(df_cout)
     
-    col1, col2 = st.columns(2)
+    df_cout_str = df_cout.copy()
+    
+
+    st.write(df_cout_str.drop('Cumul', axis=1))
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    col1.metric('Metal nécessaire', df_cout.loc['Metal', 'Cumul'])
+    col2.metric('Cristal nécessaire', df_cout.loc['Crystal', 'Cumul'])
+    col3.metric('Deut nécessaire', df_cout.loc['Deut', 'Cumul'])
+    col4.metric('Energie nécessaire', df_cout.loc['Energy', 'Cumul'])
+    
+    col1_graph, col2_graph = st.columns(2)
     
     fig = px.pie(df_cout,
                     df_cout.index,
@@ -300,7 +311,7 @@ if selected == 'Cout v10':
                     title=f'Coût {name}',
                     color_discrete_sequence=['brown', 'cyan', 'green', 'orange'])
 
-    col1.plotly_chart(fig, theme=None)
+    col1_graph.plotly_chart(fig, theme=None)
     
     df_cout_t = df_cout.T.copy()
     
@@ -321,7 +332,7 @@ if selected == 'Cout v10':
                           yaxis_title='Ressources')
     fig_res.update_xaxes(tickmode='linear')
     fig_res.update_yaxes(showgrid=False) 
-    col2.plotly_chart(fig_res)
+    col2_graph.plotly_chart(fig_res)
 
 
 
