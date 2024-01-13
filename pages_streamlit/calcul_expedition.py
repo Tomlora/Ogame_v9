@@ -176,9 +176,7 @@ def calcul_expe():
             montant_max = fret_dispo
             montant_max_vsx = fret_dispo
             
-        print(montant_max)
-        print(montant_max_vsx)
-            
+
         df_expe['Vaisseau récupérable'] = 0
         
         df_expe['Vaisseau récupérable'] = np.where(df_expe['Recuperable'] == 'Oui',
