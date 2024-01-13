@@ -161,7 +161,7 @@ def calcul_expe():
         df_expe['Structure'] = df_expe['cout_metal'] + df_expe['cout_cristal']
         
         df_expe['fret'] = [50, 100, 800, 1500, 750, 500, 2000, 1000000, 10000, 10000, 5000, 25000, 7500, 20000, 5]
-        df_expe['fret'] = df_expe['fret'] * (1 + bonus_fret) # techno hyperespace. Ajouter FdV
+        df_expe['fret'] = df_expe['fret'] * (1 + bonus_fret)
         df_expe['fret'] = df_expe['fret'] * (1 + bonus_fret_fdv)
         
         df_expe['fret_dispo'] = df_expe['Nombre'] * df_expe['fret']
@@ -169,12 +169,15 @@ def calcul_expe():
         
         max_metal_with_fdv = df_res.loc['Metal', 'Total']
         
-        if max_metal_with_fdv < fret_dispo:
+        if max_metal < fret_dispo:
             montant_max = max_metal_with_fdv
             montant_max_vsx = max_metal
         else:
             montant_max = fret_dispo
             montant_max_vsx = fret_dispo
+            
+        print(montant_max)
+        print(montant_max_vsx)
             
         df_expe['Vaisseau récupérable'] = 0
         
