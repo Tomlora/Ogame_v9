@@ -55,18 +55,20 @@ def calcul_expe():
         
             
         st.subheader('Forme de vie')
-        
-        st.info("Pour les bonus Explorateur en détail, il faut aller dans l'onglet Calcul Bonus T3")
+
         
         bonus_res = st.number_input('Bonus ressources en %', 0.0, value=0.0, format='%.2f', help="10.2% s'écrit 10.2")
         bonus_vdx = st.number_input('Bonus vaisseaux en %', 0.0, value=0.0, format='%.2f', help="10.2% s'écrit 10.2")
         bonus_am = st.number_input('Bonus AM en %', 0.0, value=0.0, format='%.2f',help="10.2% s'écrit 10.2")
         bonus_fret_fdv = st.number_input('Bonus fret en %', 0.0, value=0.0, format='%.2f', help="10.2% s'écrit 10.2")
+        bonus_n3 = st.number_input('Bonus Tech Explorateur 3_6', 0.0, value=0.0, format='%.2f', help="0 si pas classe Explorateur")
+
         
         bonus_res = bonus_res / 100
         bonus_vdx = bonus_vdx / 100
         bonus_am = bonus_am / 100
         bonus_fret_fdv = bonus_fret_fdv / 100
+        bonus_n3 = bonus_n3 / 100
         
         st.subheader('Flotte')
         
@@ -119,7 +121,8 @@ def calcul_expe():
         
         df_res = pd.DataFrame([max_metal, max_cristal, max_deut], index=['Metal', 'Cristal', 'Deut'], columns=['Ressources'])
         df_res['Forme de vie'] = np.int64(df_res['Ressources'] * bonus_res)
-        df_res['Total'] = df_res['Ressources'] + df_res['Forme de vie']
+        df_res['Forme de Vie N3'] = np.int64((df_res['Ressources'] + df_res['Forme de vie']) * bonus_n3)
+        df_res['Total'] = df_res['Ressources'] + df_res['Forme de vie'] + df_res['Forme de Vie N3']
         
         # calcul vaisseau
         
