@@ -187,11 +187,15 @@ def calcul_expe():
                                                    df_expe['Vaisseau récupérable'])
         
         df_expe['Vaisseau récupérable'] = df_expe['Vaisseau récupérable'].astype('int')
+    
         
         df_expe['Forme de vie'] = np.int64(
             np.floor(df_expe['Vaisseau récupérable'] * bonus_vdx))
         
-        df_expe['Total'] = np.int64(df_expe['Vaisseau récupérable'] + df_expe['Forme de vie'])
+        df_expe['Forme de vie N3'] = np.int64(
+            np.floor(df_expe['Vaisseau récupérable'] * bonus_vdx * bonus_n3))
+        
+        df_expe['Total'] = np.int64(df_expe['Vaisseau récupérable'] + df_expe['Forme de vie'] + df_expe['Forme de vie N3'])
         
         
 
@@ -224,6 +228,15 @@ def calcul_expe():
                         marker_color = '#00BFFF',
                         showlegend=showlegend))
                 
+
+                fig.add_trace(go.Histogram(histfunc='sum',
+                        x=[vsx],
+                        y=[df_expe.loc[vsx, 'Forme de vie N3']],
+                        name="Dont Bonus Forme de vie N3",
+                        texttemplate="%{y}",
+                        marker_color = '#B0C4DE',
+                        showlegend=showlegend))
+                
                 i += 1
 
         fig.update_layout(
@@ -240,9 +253,9 @@ def calcul_expe():
             vsx1, vsx2 = st.columns(2)
             
             with vsx1:
-                df_expe_format = df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Total']].copy()
+                df_expe_format = df_expe[['Recuperable', 'Vaisseau récupérable', 'Forme de vie', 'Forme de vie N3', 'Total']].copy()
                 
-                for col in ['Vaisseau récupérable', 'Forme de vie', 'Total']:
+                for col in ['Vaisseau récupérable', 'Forme de vie', 'Forme de vie N3', 'Total']:
                     df_expe_format[col] = df_expe_format[col].apply(lambda x : mise_en_forme_number(x))
                 st.dataframe(df_expe_format, use_container_width=True, height=560)
             with vsx2:
