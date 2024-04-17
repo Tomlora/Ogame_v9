@@ -21,7 +21,7 @@ from pages_streamlit.scanner_ina import inactif
 
 try:
     st.set_page_config(
-        page_title="Ogame v10",
+        page_title="Ogame v11",
         page_icon="📊",
         layout="wide",
     )
@@ -46,7 +46,7 @@ div[role="listbox"] ul {
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
-st.markdown("<h1 style='text-align: center; color: white;'>Ogame v10 </h1>", unsafe_allow_html=True )
+st.markdown("<h1 style='text-align: center; color: white;'>Ogame v11 </h1>", unsafe_allow_html=True )
 
 type = {0 : 'Total'}
         # 1 : 'Eco',
@@ -86,7 +86,7 @@ def load_data():
     data_pop
         Data des populations en fonction du niveau du batiments
     cost_v9
-        Cout des batiments v10 (fichier original)
+        Cout des batiments v11 (fichier original)
     """
     data = pd.read_excel('data_cost.xlsx', sheet_name=0)
     data_pop = pd.read_excel('data_cost.xlsx', sheet_name=1)
@@ -164,7 +164,7 @@ df_univers = chargement_uni(type)
 
 # Menu sidebar
 with st.sidebar:
-    selected = option_menu('Menu', ['Cout v10', 'Population', 'Production', 'Scanner inactif', 'Slot recherche', 'Expedition', 'Reduction cout'],
+    selected = option_menu('Menu', ['Cout v11', 'Population', 'Production', 'Scanner inactif', 'Slot recherche', 'Expedition', 'Reduction cout'],
                            icons=["currency-dollar", 'people-fill', 'file-spreadsheet', 'search', 'gear', 'send', 'graph-down-arrow'], menu_icon='list', default_index=0,
                            styles={
         "container": {"padding": "5!important", "background-color": "#03152A"},
@@ -247,12 +247,12 @@ def cost_cumul(race, dat, level_act, level_max, niveau_monument_rocheux, million
     return df, unite_de_mesure
 
  
-if selected == 'Cout v10':    
+if selected == 'Cout v11':    
     # title du dashboard
 
     style_metric_cards(background_color='#03152A', border_color='#0083B9', border_left_color='#0083B9', border_size_px=1, box_shadow=False, border_radius_px=0)
     
-    st.write("Calcule le cout unitaire et cumulé d'un batiment ou d'une recherche V10")
+    st.write("Calcule le cout unitaire et cumulé d'un batiment ou d'une recherche V11")
 
     race = st.radio('Selectionner la race', data['Lifeform'].unique(), horizontal=True)
     type = st.radio('Batiment/Recherche', ['Batiment', 'Recherche'], horizontal=True)
@@ -273,6 +273,12 @@ if selected == 'Cout v10':
 
     if race == "Rocas" and type == 'Batiment':
         bonus_reduc = st.slider('Niveau Monument Rocheux', 0, 30, 0)
+        niveau_reduc_ressource = st.slider('Niveau Centre de recherche sur les mineraux', 0, 30, 0)
+
+        if name in ['Ferme cristalline ', 'Enclave de méditation ']:
+            bonus_reduc_ressource = niveau_reduc_ressource * 0.5
+            bonus_reduc += bonus_reduc_ressource
+        
         st.write(bonus_reduc)
     else:
         bonus_reduc = 0
