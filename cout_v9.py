@@ -93,7 +93,7 @@ def load_data():
     cost_v9 = pd.read_excel('cost_v9.xlsx', sheet_name=1)
     return data, data_pop, cost_v9
 
-@st.cache_data(show_spinner='Nos ordinateurs analysent les univers...⌛', ttl=timedelta(hours=6))
+@st.cache_data(show_spinner='Nos ordinateurs analysent les univers...⌛Cela devrait durer une dizaine de secondes...', ttl=timedelta(hours=6))
 def chargement_uni(type):
     # on va chercher la liste des univers
     db_liste_uni = 'https://s190-fr.ogame.gameforge.com/api/universes.xml'
