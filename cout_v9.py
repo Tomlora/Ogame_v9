@@ -96,7 +96,7 @@ def load_data():
 @st.cache_data(show_spinner='Nos ordinateurs analysent les univers...⌛', ttl=timedelta(hours=6))
 def chargement_uni(type):
     # on va chercher la liste des univers
-    db_liste_uni = 'https://s256-fr.ogame.gameforge.com/api/universes.xml'
+    db_liste_uni = 'https://s172-fr.ogame.gameforge.com/api/universes.xml'
     # on enregistre le fichier
     urllib.request.urlretrieve(db_liste_uni, f"./xml/liste_univers.xml")
 
@@ -370,4 +370,5 @@ elif selected == 'Exploration':
     exploration()
     
 elif selected == 'Calcul bonus T3':
+
     calcul_bonus()
