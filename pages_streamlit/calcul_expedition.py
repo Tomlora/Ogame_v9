@@ -6,6 +6,39 @@ import plotly.graph_objects as go
 from streamlit_extras.metric_cards import style_metric_cards
 
 
+PALIERS_EXPEDITION = [
+    (10_000, '<10k'),
+    (100_000, '<100k'),
+    (1_000_000, '<1M'),
+    (5_000_000, '<5M'),
+    (25_000_000, '<25M'),
+    (50_000_000, '<50M'),
+    (75_000_000, '<75M'),
+    (100_000_000, '<100M'),
+    (float('inf'), '>100M'),
+]
+
+DICT_MAX_METAL = {
+    '<10k': 40000,
+    '<100k': 500000,
+    '<1M': 1200000,
+    '<5M': 1800000,
+    '<25M': 2400000,
+    '<50M': 3000000,
+    '<75M': 3600000,
+    '<100M': 4200000,
+    '>100M': 5000000,
+}
+
+
+def get_palier_expedition(points_top_1):
+    for index, (limite, palier) in enumerate(PALIERS_EXPEDITION):
+        if points_top_1 < limite:
+            return index, palier
+
+    return len(PALIERS_EXPEDITION) - 1, PALIERS_EXPEDITION[-1][1]
+
+
 def calcul_expe():
     
     style_metric_cards(background_color='#03152A', border_color='#0083B9', border_left_color='#0083B9', border_size_px=1, box_shadow=False, border_radius_px=0)
@@ -19,28 +52,31 @@ def calcul_expe():
     
     with st.form('Calcul expedition'):
         st.subheader('Univers & Compte')
-        
-        # A retravailler
-        if st.session_state['top1'] > 100000000:
-            points_top_1 = '>100M'
-        if st.session_state['top1'] < 100000000:
-            points_top_1 = '<100M'
-        if st.session_state['top1'] < 75000000:
-            points_top_1 = '<75M'
-        if st.session_state['top1'] < 50000000:
-            points_top_1 = '<50M'
-        if st.session_state['top1'] < 25000000:
-            points_top_1 = '<25M'
-        if st.session_state['top1'] < 5000000:
-            points_top_1 = '<5M'
-        if st.session_state['top1'] < 1000000:
-            points_top_1 = '<1M'
-        if st.session_state['top1'] < 100000:
-            points_top_1 = '<100k'                        
-        if st.session_state['top1'] < 10000:
-            points_top_1 = '<10k'
-     
-        st.markdown(f'Palier : **{points_top_1}** || (Points du top 1 : **{mise_en_forme_number(st.session_state["top1"])}**)')
+
+        palier_actuel_index, palier_actuel = get_palier_expedition(st.session_state['top1'])
+        paliers_disponibles = [palier_actuel]
+
+        if palier_actuel_index < len(PALIERS_EXPEDITION) - 1:
+            paliers_disponibles.append(PALIERS_EXPEDITION[palier_actuel_index + 1][1])
+
+        st.markdown(
+            f'Palier actuel : **{palier_actuel}** || '
+            f'(Points du top 1 : **{mise_en_forme_number(st.session_state["top1"])}**)'
+        )
+
+        points_top_1 = st.radio(
+            'Palier utilisé pour le calcul',
+            paliers_disponibles,
+            index=0,
+            horizontal=True,
+            format_func=lambda palier: (
+                f'Palier actuel ({palier})'
+                if palier == palier_actuel
+                else f'Palier suivant ({palier})'
+            ),
+            help='Le palier actuel reste sélectionné par défaut. Le palier suivant permet de simuler la progression du top 1.',
+        )
+
         tech_hyperespace = st.slider('Technologie Hyperespace', 0, 30, 1)
         bonus_fret = tech_hyperespace * 0.05
         
@@ -98,24 +134,12 @@ def calcul_expe():
         
         # calcul res max
         
-        dict_max_metal = {'<10k' : 40000,
-                     '<100k': 500000,
-                     '<1M' : 1200000,
-                     '<5M' : 1800000,
-                     '<25M': 2400000,
-                     '<50M' : 3000000,
-                     '<75M' : 3600000,
-                     '<100M' : 4200000 ,
-                     '>100M' : 5000000}
-             
-        
-        
         if eclaireur > 0:
             facteur_eclaireur = 2
         else:
             facteur_eclaireur = 1
         
-        max_metal = int(dict_max_metal[points_top_1] * st.session_state["vitesse_eco"] * classe_facteur * facteur_eclaireur)
+        max_metal = int(DICT_MAX_METAL[points_top_1] * st.session_state["vitesse_eco"] * classe_facteur * facteur_eclaireur)
         max_cristal = int(max_metal / 2)
         max_deut = int(max_metal / 3)
         
